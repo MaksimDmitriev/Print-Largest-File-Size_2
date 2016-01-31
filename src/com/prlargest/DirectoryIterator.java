@@ -11,12 +11,10 @@ public class DirectoryIterator {
         throw new AssertionError();
     }
 
-    public static String getLargestFilePath(File initPath) {
-        if (initPath == null) {
-            throw new IllegalArgumentException("The init path cannot be null");
-        }
-        long maxFileLength = 0;
-        String maxFilePath = null;
+    public static File getBiggestFile(File initPath) {
+        checkNotNull(initPath);
+
+        File biggestFile = new File("");
         Deque<File> stack = new ArrayDeque<>();
         stack.push(initPath);
         while (!stack.isEmpty()) {
@@ -26,12 +24,34 @@ public class DirectoryIterator {
                 for (File file : files) {
                     stack.push(file);
                 }
-            } else if (current.length() > maxFileLength) {
-                maxFileLength = current.length();
-                maxFilePath = current.getAbsolutePath();
+            } else if (current.length() > biggestFile.length()) {
+                biggestFile = current;
             }
         }
-        return maxFilePath;
+        return biggestFile;
+    }
+
+    private static File getBiggestFileRec(File current, File biggest) {
+        File[] files = current.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                biggest = getBiggestFileRec(file, biggest);
+            }
+        } else if (current.length() > biggest.length()) {
+            biggest = current;
+        }
+        return biggest;
+    }
+
+    public static File getBiggestFileRec(File current) {
+        checkNotNull(current);
+        return getBiggestFileRec(current, new File(""));
+    }
+
+    private static void checkNotNull(File file) {
+        if (file == null) {
+            throw new IllegalArgumentException("The init path cannot be null");
+        }
     }
 
 }
