@@ -8,6 +8,7 @@ import java.util.Deque;
 public class DirectoryIterator {
 
     private DirectoryIterator() {
+        // Suppress default constructor for noninstantiability
         throw new AssertionError();
     }
 
